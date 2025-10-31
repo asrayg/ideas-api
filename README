@@ -1,7 +1,21 @@
 Was really curious about self hosting after the recent AWS and Azure outages. Hosted on my own infra stack on a Raspberry Pi. Basic HTTPS API to just get a random idea from someone else or post your own. Understanding that infrastructure engineering is a lil time taking.
 
+Fetch a random approved idea.
 
+```bash
+curl https://asrayg.taildacc17.ts.net/ideas/random
+```
 
+### POST /ideas/submit
+
+Submit a new idea for review (max 30/hour per IP).
+
+```bash
+curl -X POST https://asrayg.taildacc17.ts.net/ideas/submit \
+  -H "Content-Type: application/json" \
+  -d '{"idea":"AI that writes haikus","example":"LLM trained on poems","author":"Asray"}'
+```
+Try it out yourself!
 
 # Idea API
 
