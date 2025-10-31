@@ -1,0 +1,231 @@
+````markdown
+# Idea API
+
+A lightweight REST API that serves random ideas, accepts new submissions, and allows manual approval of pending ideas.  
+Built with Flask, Flask-Limiter, and optionally exposed to the internet via Tailscale Funnel.
+
+---
+
+## Features
+
+- `GET /ideas/random` — Fetch a random approved idea  
+- `POST /ideas/submit` — Submit a new idea for review  
+- `GET /ideas/pending` — View pending submissions (admin only)  
+- `POST /ideas/approve/<id>` — Approve a pending idea (admin only)  
+- Rate-limited to 30 requests per hour per IP  
+- JSON-based storage (`approved.json`, `pending.json`)  
+- Terminal-based review and approval tool (`approve_pending.py`)  
+- Optional persistent deployment using systemd  
+
+---
+
+## Example Data Structure
+
+```json
+{
+  "id": 1761854712,
+  "idea": "AI-powered idea generator",
+  "example": "Uses GPT-5 to suggest startup ideas",
+  "author": "John Doe"
+}
+````
+
+---
+
+## Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/idea-api.git
+cd idea-api
+```
+
+### 2. Create and activate a virtual environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the API
+
+```bash
+python3 app.py
+```
+
+The API runs locally on:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+## Public Access with Tailscale Funnel
+
+1. Install and log in to Tailscale on your Raspberry Pi.
+2. Enable Funnel in your Tailscale Admin Console.
+3. Expose the Flask app with:
+
+   ```bash
+   sudo tailscale funnel 5000
+   ```
+
+   This will provide a public HTTPS URL such as:
+
+   ```
+   https://asrayg.taildacc17.ts.net/
+   ```
+
+---
+
+## API Endpoints
+
+### GET /ideas/random
+
+Fetch a random approved idea.
+
+```bash
+curl https://asrayg.taildacc17.ts.net/ideas/random
+```
+
+### POST /ideas/submit
+
+Submit a new idea for review (max 30/hour per IP).
+
+```bash
+curl -X POST https://asrayg.taildacc17.ts.net/ideas/submit \
+  -H "Content-Type: application/json" \
+  -d '{"idea":"AI that writes haikus","example":"LLM trained on poems","author":"Asray"}'
+```
+
+### GET /ideas/pending
+
+View pending ideas (admin only).
+
+```bash
+curl https://asrayg.taildacc17.ts.net/ideas/pending \
+  -H "Authorization: Bearer mysecretadminpass"
+```
+
+### POST /ideas/approve/<id>
+
+Approve a pending idea (admin only).
+
+```bash
+curl -X POST https://asrayg.taildacc17.ts.net/ideas/approve/1761854712 \
+  -H "Authorization: Bearer mysecretadminpass"
+```
+
+---
+
+## Terminal Approval Script
+
+The script `approve_pending.py` provides a simple terminal interface for reviewing and approving pending ideas.
+
+Run it manually:
+
+```bash
+python3 approve_pending.py
+```
+
+Example session:
+
+```
+Reviewing 1 pending idea...
+
+Idea ID: 1761854712
+Idea: AI-powered idea generator
+Example: Uses GPT-5 to suggest startup ideas
+Author: John Doe
+
+Approve? (y = yes, n = no, s = skip): y
+Approved!
+
+Done reviewing.
+Approved ideas: 1 | Remaining pending: 0
+```
+
+---
+
+## Run Permanently with systemd
+
+Create a service so the API runs automatically on startup.
+
+1. Create a service file:
+
+   ```bash
+   sudo nano /etc/systemd/system/idea-api.service
+   ```
+
+2. Add the following content:
+
+   ```ini
+   [Unit]
+   Description=Idea API Service
+   After=network.target
+
+   [Service]
+   User=asryg
+   WorkingDirectory=/home/asryg/idea-api
+   Environment="PATH=/home/asryg/idea-api/venv/bin"
+   ExecStart=/home/asryg/idea-api/venv/bin/python app.py
+   Restart=always
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. Enable and start the service:
+
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable idea-api
+   sudo systemctl start idea-api
+   ```
+
+4. View logs:
+
+   ```bash
+   sudo systemctl status idea-api
+   sudo journalctl -u idea-api -f
+   ```
+
+---
+
+## File Structure
+
+```
+idea-api/
+│
+├── app.py
+├── approve_pending.py
+├── approved.json
+├── pending.json
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Future Improvements
+
+* SQLite database backend
+* Web dashboard for approvals
+* User authentication
+* Categorization and tagging system for ideas
+
+---
+
+## Author
+
+Asray Gopa
+Developed for sharing and curating creative ideas through a simple REST API.
+

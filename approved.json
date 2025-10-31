@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "idea": "A fridge that texts you when you\u2019re out of milk",
+    "example": "IoT sensor + Twilio SMS API",
+    "author": "Asray Gopa"
+  },
+  {
+    "id": 2,
+    "idea": "App that turns chores into RPG quests",
+    "example": "Gamified to-do list",
+    "author": "Jane Doe"
+  },
+  {
+    "idea": "AI-powered idea generator",
+    "example": "Uses GPT-5 to suggest startup ideas",
+    "author": "John Doe",
+    "id": 1761854712
+  }
+
