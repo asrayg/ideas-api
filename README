@@ -1,3 +1,10 @@
+Was really curious about self hosting after the recent AWS and Azure outages. Hosted on my own infra stack on a Raspberry Pi. 
+Basic HTTPS API to just get a random idea from someone else or post your own. Understanding that infrastructure engineering is 
+a lil time taking.
+
+
+
+
 # Idea API
 
 A lightweight REST API that serves random ideas, accepts new submissions, and allows manual approval of pending ideas.  
