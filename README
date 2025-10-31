@@ -1,4 +1,3 @@
-````markdown
 # Idea API
 
 A lightweight REST API that serves random ideas, accepts new submissions, and allows manual approval of pending ideas.  
